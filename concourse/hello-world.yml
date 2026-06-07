@@ -3,7 +3,7 @@ resources:
     type: git
     icon: github
     source:
-      uri: https://github.com/danwiltshire/experiments-with-concourse
+      uri: https://github.com/danwiltshire/experiments-with-concourse.git
 
 jobs:
   - name: set-self
