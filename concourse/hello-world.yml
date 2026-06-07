@@ -15,6 +15,10 @@ jobs:
 
   - name: hello-world-job
     plan:
+      - get: repo
+        trigger: true
+        passed: [configure-self]
+
       - task: hello-world-task
         config:
           # Tells Concourse which type of worker this task should run on
