@@ -1,11 +1,21 @@
 resources:
-  - name: concourse-docs-git
+  - name: experiments-with-concourse
     type: git
     icon: github
     source:
-      uri: https://github.com/concourse/docs
+      uri: https://github.com/danwiltshire/experiments-with-concourse
 
 jobs:
+  - name: set-self
+    public: true
+    build_log_retention:
+      builds: 50
+    plan:
+      - get: experiments-with-concourse # Fetches the repo
+        trigger: true
+      - set_pipeline: self
+        file: concourse/hello-world.yml
+
   - name: hello-world-job
     plan:
       - task: hello-world-task

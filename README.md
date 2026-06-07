@@ -24,3 +24,7 @@ Experimenting with Concourse CI.
 6. Unpause new pipeline: `fly -t tutorial unpause-pipeline -p hello-world`
 
 7. Run pipeline: `fly -t tutorial trigger-job --job hello-world/hello-world-job --watch`
+
+## Recommended VS Code Extensions
+
+- [Concourse CI Pipeline Editor](https://marketplace.visualstudio.com/items?itemName=vmware.vscode-concourse) (Requires Java)
