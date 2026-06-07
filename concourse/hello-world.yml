@@ -2,6 +2,7 @@ resources:
   - name: repo
     type: git
     icon: github
+    check_every: 10s
     source:
       uri: https://github.com/danwiltshire/experiments-with-concourse.git
 
@@ -16,7 +17,7 @@ jobs:
   - name: hello-world-job
     plan:
       - get: repo
-        # trigger: true
+        trigger: true
         passed: [configure-self]
 
       - task: hello-world-task
