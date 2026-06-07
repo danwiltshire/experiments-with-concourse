@@ -13,7 +13,7 @@ jobs:
     plan:
       - get: experiments-with-concourse # Fetches the repo
         trigger: true
-      - set_pipeline: self
+      - set_pipeline: experiments-with-concourse
         file: concourse/hello-world.yml
 
   - name: hello-world-job
