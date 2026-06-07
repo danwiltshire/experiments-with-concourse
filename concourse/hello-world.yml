@@ -1,20 +1,17 @@
 resources:
-  - name: experiments-with-concourse
+  - name: repo
     type: git
     icon: github
     source:
       uri: https://github.com/danwiltshire/experiments-with-concourse.git
 
 jobs:
-  - name: set-self
-    public: true
-    build_log_retention:
-      builds: 50
+  - name: configure-self
     plan:
-      - get: experiments-with-concourse # Fetches the repo
+      - get: repo
         trigger: true
-      - set_pipeline: experiments-with-concourse
-        file: concourse/hello-world.yml
+      - set_pipeline: self
+        file: repo/concourse/hello-world.yml
 
   - name: hello-world-job
     plan:
