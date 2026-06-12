@@ -1,0 +1,16 @@
+[Unit]
+Description=Concourse Web
+After=network.target
+
+[Service]
+User=concourse
+Group=concourse
+EnvironmentFile=/usr/local/concourse/web.env
+ExecStart=/usr/local/concourse/bin/concourse web
+Restart=on-failure
+RestartSec=3
+KillSignal=SIGTERM
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target

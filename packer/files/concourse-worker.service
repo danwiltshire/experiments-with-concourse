@@ -1,0 +1,19 @@
+[Unit]
+Description=Concourse Worker
+After=network.target
+
+[Service]
+User=root
+Group=root
+EnvironmentFile=/usr/local/concourse/worker.env
+ExecStart=/usr/local/concourse/bin/concourse worker
+Restart=on-failure
+RestartSec=3
+# SIGUSR2 triggers a graceful land: the worker drains running containers before exit.
+KillSignal=SIGUSR2
+SendSIGKILL=yes
+# Allow up to 5 minutes for builds to drain.
+TimeoutStopSec=300
+
+[Install]
+WantedBy=multi-user.target

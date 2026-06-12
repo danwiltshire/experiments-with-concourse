@@ -6,33 +6,36 @@ resources:
     source:
       uri: https://github.com/danwiltshire/experiments-with-concourse.git
 
+var_sources:
+  - name: awstoken
+    type: idtoken
+    config:
+      audience: ["sts.amazonaws.com"]
+
 jobs:
-  - name: configure-self
+  - name: test
     plan:
       - get: repo
         trigger: true
-      - set_pipeline: self
-        file: repo/concourse/hello-world.yml
 
-  - name: hello-world-job
-    plan:
-      - get: repo
-        trigger: true
-        passed: [configure-self]
-
-      - task: hello-world-task
+      - task: oidc-s3-ls
         config:
-          # Tells Concourse which type of worker this task should run on
           platform: linux
-          # This is one way of telling Concourse which container image to use for a
-          # task. We'll explain this more when talking about resources
           image_resource:
             type: registry-image
-            source:
-              repository: busybox # images are pulled from docker hub by default
-              tag: latest
-          # The command Concourse will run inside the container
-          # echo "Hello world!"
+            source: { repository: node, tag: "24" }
+          inputs:
+            - name: repo
+          params:
+            aws_role_arn: arn:aws:iam::123456789012:role/concourse-main-hello-world-oidc
+            aws_oidc_token: ((awstoken:token))
           run:
-            path: echo
-            args: ["Hello world!"]
+            path: bash
+            args:
+              - -ec
+              - |
+                apt-get update -qq && apt-get install -y --no-install-recommends awscli
+
+                source repo/concourse/scripts/aws-oidc-auth.sh
+
+                aws s3 ls

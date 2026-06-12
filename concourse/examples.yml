@@ -1,0 +1,64 @@
+resources:
+  # - name: repo
+  #   type: git
+  #   icon: github
+  #   check_every: 10s
+  #   source:
+  #     uri: https://github.com/danwiltshire/experiments-with-concourse.git
+
+var_sources:
+  - name: awstoken
+    type: idtoken
+    config:
+      audience: ["sts.amazonaws.com"]
+
+jobs:
+  - name: aws-login
+    plan:
+      - task: print
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: { repository: amazon/aws-cli }
+          run:
+            path: bash
+            args:
+              - -e
+              - -c
+              - |
+                aws sts assume-role-with-web-identity \
+                  --role-session-name Concourse \
+                  --role-arn arn:aws:iam::123456789012:role/concourse-main-hello-world-oidc \
+                  --web-identity-token ((awstoken:token)) > creds.json
+                echo "Now do something with the temporary credentials in creds.json"
+
+  # - name: configure-self
+  #   plan:
+  #     - get: repo
+  #       trigger: true
+  #     - set_pipeline: self
+  #       file: repo/concourse/hello-world.yml
+
+  # - name: hello-world-job
+  #   plan:
+  #     - get: repo
+  #       trigger: true
+  #       passed: [configure-self]
+
+  #     - task: hello-world-task
+  #       config:
+  #         # Tells Concourse which type of worker this task should run on
+  #         platform: linux
+  #         # This is one way of telling Concourse which container image to use for a
+  #         # task. We'll explain this more when talking about resources
+  #         image_resource:
+  #           type: registry-image
+  #           source:
+  #             repository: busybox # images are pulled from docker hub by default
+  #             tag: latest
+  #         # The command Concourse will run inside the container
+  #         # echo "Hello world!"
+  #         run:
+  #           path: echo
+  #           args: ["Hello world!"]
